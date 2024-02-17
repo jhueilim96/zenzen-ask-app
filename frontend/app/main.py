@@ -6,7 +6,7 @@ import json
 
 async def retrieve_bot_response(text):
     async with websockets.connect(
-        "ws://fastapi_server:8000/api/v1/chat/tools"
+        "ws://localhost:8000/api/v1/chat/tools" # "ws://fastapi_server:8000/api/v1/chat/tools"
     ) as websocket:
         message_data = {"message": text}
         json_data = json.dumps(message_data)
@@ -20,6 +20,8 @@ async def retrieve_bot_response(text):
                     counter += 1
                     response = await asyncio.wait_for(websocket.recv(), timeout=20)
                     response = json.loads(response)
+
+                    # st.write(response)
 
                     if "error" in response:
                         stream_data = response["error"]
@@ -42,7 +44,7 @@ async def retrieve_bot_response(text):
         return stream_data
 
 
-st.title("Simple chat")
+st.title("Zenzen chat")
 
 # Initialize chat history
 if "messages" not in st.session_state:

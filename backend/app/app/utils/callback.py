@@ -1,14 +1,15 @@
-from app.schemas.message_schema import IChatResponse
-from app.utils.adaptive_cards.cards import create_adaptive_card, create_image_card
-from app.utils.chains import get_suggestions_questions
-from langchain.callbacks.base import AsyncCallbackHandler
-from app.utils.uuid6 import uuid7
-from fastapi import WebSocket
-from uuid import UUID
 from typing import Any
+from uuid import UUID
+
+from fastapi import WebSocket
+from langchain.callbacks.base import AsyncCallbackHandler
 from langchain.schema.agent import AgentFinish
 from langchain.schema.output import LLMResult
 
+from app.schemas.message_schema import IChatResponse
+from app.utils.adaptive_cards.cards import create_adaptive_card, create_image_card
+from app.utils.chains import get_suggestions_questions
+from app.utils.uuid6 import uuid7
 
 DEFAULT_ANSWER_PREFIX_TOKENS = ["Final", " Answer", ":"]
 
@@ -233,18 +234,18 @@ class CustomFinalStreamingStdOutCallbackHandler(AsyncCallbackHandler):
         )
         await self.websocket.send_json(resp.dict())
 
-        suggested_responses = await get_suggestions_questions(message)
-        if len(suggested_responses) > 0:
-            self.adaptive_card = create_adaptive_card(
-                answer=message,
-            )
+        # suggested_responses = await get_suggestions_questions(message)
+        # if len(suggested_responses) > 0:
+        #     self.adaptive_card = create_adaptive_card(
+        #         answer=message,
+        #     )
         medium_resp = IChatResponse(
             id="",
             message_id=self.message_id,
             sender="bot",
             message=self.adaptive_card.to_dict(),
             type="end",
-            suggested_responses=suggested_responses,
+            # suggested_responses=suggested_responses,
         )
         await self.websocket.send_json(medium_resp.dict())
 
